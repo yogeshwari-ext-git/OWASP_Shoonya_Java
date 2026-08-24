@@ -1,0 +1,41 @@
+name: Generate SBOM
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - add-sbom-generation
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build project
+        run: mvn -B package -DskipTests
+
+      - name: Generate CycloneDX SBOM
+        run: |
+          mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-sbom
+          path: target/bom.json
