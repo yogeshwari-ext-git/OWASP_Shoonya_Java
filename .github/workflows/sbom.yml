@@ -19,6 +19,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch master branch
+        run: git fetch origin master:refs/remotes/origin/master
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -31,8 +36,7 @@ jobs:
         run: mvn -B package -DskipTests
 
       - name: Generate CycloneDX SBOM
-        run: |
-          mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
+        run: mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
