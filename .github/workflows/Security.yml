@@ -1,7 +1,4 @@
-name: CodeQL
-
-env:
-  CODEQL_EXTRACTOR_JAVA_RUN_ANNOTATION_PROCESSORS: true
+name: Semgrep SAST
 
 on:
   push:
@@ -16,28 +13,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze:
-    name: Analyze
+  sast:
+    name: Semgrep SAST
     runs-on: ubuntu-latest
 
     permissions:
-      actions: read
       contents: read
       security-events: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          languages: java
+          distribution: temurin
+          java-version: '17'
+          cache: maven
 
       - name: Build project
         run: mvn -B package -DskipTests
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+      - name: Run Semgrep
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/java
