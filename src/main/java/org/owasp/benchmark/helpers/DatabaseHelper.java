@@ -54,7 +54,7 @@ public class DatabaseHelper {
         org.springframework.context.ApplicationContext ac =
                 new org.springframework.context.support.ClassPathXmlApplicationContext(
                         "/context.xml", DatabaseHelper.class);
-        javax.sql.DataSource data = (javax.sql.DataSource) ac.getBean("dataSource");
+        //javax.sql.DataSource data = (javax.sql.DataSource) ac.getBean("dataSource");
         JDBCtemplate = new org.springframework.jdbc.core.JdbcTemplate(data);
         System.out.println("Spring context loaded!");
     }
